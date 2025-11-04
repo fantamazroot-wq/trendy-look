@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Адмінка • Trendy Look</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <a href="index.html" class="icon-btn">Back</a>
+    <h1 class="logo">АДМІНКА</h1>
+  </header>
+
+  <main style="padding:2rem; max-width:900px; margin:0 auto;">
+    <button class="btn" onclick="showForm()">+ Додати товар</button>
+    <button class="btn" onclick="exportData()" style="margin-left:1rem;">Експорт</button>
+    <input type="file" id="importFile" style="display:none;" onchange="importData(event)">
+    <button class="btn" onclick="document.getElementById('importFile').click()">Імпорт</button>
+    <button class="btn" onclick="clearAll()" style="background:red; float:right;">Очистити ВСЕ</button>
+
+    <div id="form" style="display:none; background:#fff; padding:2rem; border-radius:12px; margin:2rem 0;">
+      <input type="text" id="name" placeholder="Назва" required><br><br>
+      <textarea id="desc" placeholder="Опис"></textarea><br><br>
+      <input type="number" id="price" placeholder="Ціна (грн)" required><br><br>
+
+      <select id="catSelect"></select>
+      <input type="text" id="newCat" placeholder="Нова категорія">
+      <button class="btn" onclick="addCategory()">Додати</button><br><br>
+
+      <input type="text" id="colors" placeholder="Кольори: чорний, білий"><br><br>
+      <input type="text" id="sizes" placeholder="Розміри: S, M, L"><br><br>
+
+      <div id="imagesPreview"></div>
+      <input type="file" id="images" multiple accept="image/*"><br><br>
+
+      <textarea id="sizeChart" placeholder="<table>...</table>"></textarea><br><br>
+
+      <button class="btn" onclick="saveProduct()">Зберегти</button>
+      <button class="btn" onclick="hideForm()" style="background:gray;">Скасувати</button>
+    </div>
+
+    <h2>Товари</h2>
+    <div id="adminProducts"></div>
+  </main>
+
+  <script src="admin.js"></script>
+</body>
+</html>

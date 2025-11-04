@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Trendy Look</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <button id="menuBtn" class="menu-btn">Menu</button>
+    <h1 class="logo">Trendy Look</h1>
+    <button id="cartBtn" class="icon-btn">Cart <span id="cartCount">0</span></button>
+  </header>
+
+  <nav id="sidebar" class="sidebar">
+    <button class="close-btn">Close</button>
+    <div id="categoriesList"></div>
+  </nav>
+
+  <main id="productsGrid" class="products-grid"></main>
+
+  <div id="cartModal" class="modal">
+    <div class="modal-content">
+      <span class="close">Close</span>
+      <h2>Кошик</h2>
+      <div id="cartItems"></div>
+      <button id="clearCart" class="btn">Очистити</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Товар • Trendy Look</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <a href="index.html" class="icon-btn">Back</a>
+    <h1 class="logo">Trendy Look</h1>
+    <button id="cartBtn" class="icon-btn">Cart <span id="cartCount">0</span></button>
+  </header>
+
+  <main style="padding:2rem; max-width:1000px; margin:0 auto;" id="productDetail">
+    <p style="text-align:center; font-size:1.2rem; color:#666;">Завантаження товару...</p>
+  </main>
+
+  <div id="sizeChartModal" class="modal">
+    <div class="modal-content">
+      <span class="close">Close</span>
+      <h2>Розмірна сітка</h2>
+      <div id="sizeTable"></div>
+    </div>
+  </div>
+
+  <!-- ВСІ ФУНКЦІЇ ВСЕРЕДИНІ — НЕ ПОТРІБЕН script.js -->
+  <script>
+    // === БАЗА ДАНИХ ===
+    const db = {
+      get: (k) => JSON.parse(localStorage.getItem(k) || '[]'),
+      set: (k, v) => localStorage.setItem(k, JSON.stringify(v))
+    };
+
+    // === ОНОВЛЕННЯ КОШИКА ===
+    function updateCartCount() {
+      const cart = db.get('cart');
+      const el = document.getElementById('cartCount');
+      if (el) el.textContent = cart.length;
+    }
+
+    // === ДОДАТИ В КОШИК ===
+    function addToCart(item) {
+      const cart = db.get('cart');
+      cart.push(item);
+      db.set('cart', cart);
+      updateCartCount();
+      alert('Додано в кошик!');
+    }
+
+    // === ЗАВАНТАЖИТИ ТОВАР ===
+    const productId = localStorage.getItem('currentProduct');
+    const products = db.get('products');
+    const product = products.find(p => p.id === productId);
+
+    if (!product) {
+      document.getElementById('productDetail').innerHTML = `
+        <p style="text-align:center; color:red; font-size:1.2rem;">
+          Товар не знайдено. <a href="index.html" style="color:#000; text-decoration:underline;">На головну</a>
+        </p>
+      `;
+    } else {
+      document.getElementById('productDetail').innerHTML = `
+        <div style="display:grid; gap:2rem; grid-template-columns:1fr 1fr; align-items:start;">
+          <!-- Фото -->
+          <div>
+            <img id="mainImg" src="${product.images[0] || 'https://via.placeholder.com/500'}" 
+                 style="width:100%; max-height:500px; object-fit:cover; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.1);">
+            <div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">
+              ${product.images.map(img => `
+                <img src="${img}" 
+                     style="width:70px; height:70px; object-fit:cover; border-radius:8px; cursor:pointer; border:2px solid #eee;"
+                     onclick="document.getElementById('mainImg').src=this.src">
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Інформація -->
+          <div>
+            <h1 style="font-size:2rem; font-weight:700; margin-bottom:0.5rem;">${product.name}</h1>
+            <p style="color:#555; line-height:1.7; margin-bottom:1rem;">${product.description || 'Без опису'}</p>
+            <p style="font-size:0.9rem; color:#777;"><strong>Артикул:</strong> <code>${product.id}</code></p>
+
+            <!-- Колір -->
+            <div style="margin:1.5rem 0;">
+              <label style="font-weight:600; display:block; margin-bottom:0.5rem;">Колір:</label>
+              <select id="colorSelect" style="width:100%; padding:0.7rem; border-radius:8px; border:1px solid #ddd; font-size:1rem;">
+                ${product.colors.map(c => `<option>${c}</option>`).join('')}
+              </select>
+            </div>
+
+            <!-- Розмір -->
+            <div style="margin:1.5rem 0;">
+              <label style="font-weight:600; display:block; margin-bottom:0.5rem;">Розмір:</label>
+              <select id="sizeSelect" style="width:100%; padding:0.7rem; border-radius:8px; border:1px solid #ddd; font-size:1rem;">
+                ${product.sizes.map(s => `<option>${s}</option>`).join('')}
+              </select>
+            </div>
+
+            <!-- Розмірна сітка -->
+            <button class="btn" style="background:#333; width:100%; margin:1rem 0;" 
+                    onclick="showSizeChart(\`${product.sizeChart.replace(/`/g, '\\`')}\`)">
+              Розмірна сітка
+            </button>
+
+            <!-- Ціна -->
+            <div style="font-size:2rem; font-weight:700; color:#000; margin:1.5rem 0;">
+              ${product.price} грн
+            </div>
+
+            <!-- Додати в кошик -->
+            <button class="btn" style="background:#000; color:#fff; font-size:1.1rem; width:100%; padding:1rem;"
+                    onclick="addToCart({
+                      ...${JSON.stringify(product)},
+                      selectedSize: document.getElementById('sizeSelect').value
+                    })">
+              Додати в кошик
+            </button>
+          </div>
+        </div>
+      `;
+
+      // Оновлюємо кількість у кошику
+      updateCartCount();
+    }
+
+    // === РОЗМІРНА СІТКА ===
+    function showSizeChart(html) {
+      const modal = document.getElementById('sizeChartModal');
+      document.getElementById('sizeTable').innerHTML = html || '<p>Сітка відсутня</p>';
+      modal.classList.add('active');
+    }
+
+    // Закриття модалки
+    document.querySelector('#sizeChartModal .close').onclick = () => {
+      document.getElementById('sizeChartModal').classList.remove('active');
+    };
+
+    // Закриття при кліку поза модалкою
+    window.onclick = (e) => {
+      const modal = document.getElementById('sizeChartModal');
+      if (e.target === modal) modal.classList.remove('active');
+    };
+  </script>
+</body>
+</html>
