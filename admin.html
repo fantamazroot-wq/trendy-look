@@ -14,52 +14,37 @@
   </header>
 
   <main style="padding:2rem; max-width:900px; margin:0 auto;">
-    <button class="btn" id="addProductBtn">+ Додати товар</button>
-    <button class="btn" id="exportBtn" style="margin-left:1rem;">Експорт</button>
+    <button class="btn" onclick="showForm()">+ Додати товар</button>
+    <button class="btn" onclick="exportData()" style="margin-left:1rem;">Експорт</button>
     <input type="file" id="importFile" style="display:none;" onchange="importData(event)">
-    <button class="btn" id="importBtn">Імпорт</button>
-    <button class="btn" id="clearAllBtn" style="background:red; float:right;">Очистити ВСЕ</button>
+    <button class="btn" onclick="document.getElementById('importFile').click()">Імпорт</button>
+    <button class="btn" onclick="clearAll()" style="background:red; float:right;">Очистити ВСЕ</button>
 
-    <div id="form" style="display:none; background:#fff; padding:2rem; border-radius:12px; margin:2rem 0; box-shadow:0 4px 15px rgba(0,0,0,0.05);">
-      <input type="text" id="name" placeholder="Назва товару" required><br><br>
-      <textarea id="desc" placeholder="Короткий опис"></textarea><br><br>
+    <div id="form" style="display:none; background:#fff; padding:2rem; border-radius:12px; margin:2rem 0;">
+      <input type="text" id="name" placeholder="Назва" required><br><br>
+      <textarea id="desc" placeholder="Опис"></textarea><br><br>
       <input type="number" id="price" placeholder="Ціна (грн)" required><br><br>
 
       <select id="catSelect"></select>
       <input type="text" id="newCat" placeholder="Нова категорія">
-      <button class="btn" id="addCatBtn">Додати категорію</button><br><br>
+      <button class="btn" onclick="addCategory()">Додати</button><br><br>
 
       <input type="text" id="colors" placeholder="Кольори: чорний, білий"><br><br>
       <input type="text" id="sizes" placeholder="Розміри: S, M, L"><br><br>
 
-      <div id="imagesPreview" style="margin:1rem 0; display:flex; flex-wrap:wrap; gap:10px;"></div>
+      <div id="imagesPreview"></div>
       <input type="file" id="images" multiple accept="image/*"><br><br>
 
-      <textarea id="sizeChart" placeholder="<table>...</table>" style="height:100px;"></textarea><br><br>
+      <textarea id="sizeChart" placeholder="<table>...</table>"></textarea><br><br>
 
-      <button class="btn" id="saveBtn">Зберегти</button>
-      <button class="btn" id="cancelBtn" style="background:gray;">Скасувати</button>
+      <button class="btn" onclick="saveProduct()">Зберегти</button>
+      <button class="btn" onclick="hideForm()" style="background:gray;">Скасувати</button>
     </div>
 
-    <h2 style="margin-top:3rem;">Товари</h2>
+    <h2>Товари</h2>
     <div id="adminProducts"></div>
   </main>
 
-  <!-- ПІДКЛЮЧАЄМО admin.js -->
   <script src="admin.js"></script>
-  <script>
-    // === ПОДІЇ ===
-    document.getElementById('addProductBtn').onclick = () => showForm();
-    document.getElementById('addCatBtn').onclick = addCategory;
-    document.getElementById('saveBtn').onclick = saveProduct;
-    document.getElementById('cancelBtn').onclick = hideForm;
-    document.getElementById('exportBtn').onclick = exportData;
-    document.getElementById('importBtn').onclick = () => document.getElementById('importFile').click();
-    document.getElementById('clearAllBtn').onclick = clearAll;
-
-    // === ІНІТ ===
-    renderCategoriesSelect();
-    renderAdmin();
-  </script>
 </body>
 </html>
