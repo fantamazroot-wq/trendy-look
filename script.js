@@ -1,19 +1,35 @@
-// === БАЗА ДАНИХ ===
-const db = {
-  get: (k) => JSON.parse(localStorage.getItem(k) || '[]'),
-  set: (k, v) => localStorage.setItem(k, JSON.stringify(v))
-};
+// === ЗАВАНТАЖИТИ ТОВАРИ З JSON (всі пристрої) ===
+let products = [];
 
-// === ЗАВАНТАЖИТИ ДАНІ ===
-let products = db.get('products') || [];
-let categories = db.get('categories') || [
+// Спочатку пробуємо завантажити з products.json
+fetch('products.json')
+  .then(r => {
+    if (!r.ok) throw new Error('No products.json');
+    return r.json();
+  })
+  .then(data => {
+    products = data;
+    console.log('Товари завантажено з products.json');
+    loadProducts();
+  })
+  .catch(() => {
+    // Якщо немає JSON — беремо з localStorage (для адмінки)
+    const db = {
+      get: (k) => JSON.parse(localStorage.getItem(k) || '[]')
+    };
+    products = db.get('products') || [];
+    console.log('Товари завантажено з localStorage (адмінка)');
+    loadProducts();
+  });
+
+// === КАТЕГОРІЇ ===
+let categories = [
   { id: 'men', name: 'Одяг чоловікам', sub: ['jacket', 'suit', 'sweater'] },
   { id: 'women', name: 'Одяг жінкам', sub: ['jacket', 'dress'] }
 ];
-db.set('categories', categories); // ЗБЕРІГАЄМО КАТЕГОРІЇ
-db.set('products', products);     // ЗБЕРІГАЄМО ТОВАРИ
 
-let cart = db.get('cart') || [];
+// === КОШИК ===
+let cart = JSON.parse(localStorage.getItem('cart') || '[]');
 
 // === ЕЛЕМЕНТИ ===
 const menuBtn = document.getElementById('menuBtn');
@@ -59,8 +75,8 @@ function renderCategories() {
 function loadProducts(filter = '') {
   let filtered = products;
   if (filter) {
-    filtered = products.filter(p => 
-      p.category === filter || 
+    filtered = products.filter(p =>
+      p.category === filter ||
       categories.find(c => c.sub.includes(filter))?.id === p.category
     );
   }
@@ -96,7 +112,7 @@ function viewProduct(id) {
 // === КОШИК ===
 function updateCart() {
   cartCount.textContent = cart.length;
-  db.set('cart', cart);
+  localStorage.setItem('cart', JSON.stringify(cart));
 
   const items = document.getElementById('cartItems');
   if (!items) return;
@@ -119,5 +135,4 @@ document.getElementById('clearCart').onclick = () => { cart = []; updateCart(); 
 
 // === ІНІТ ===
 renderCategories();
-loadProducts();
 updateCart();
